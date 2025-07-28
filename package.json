@@ -10,9 +10,12 @@
     "test:tags": "node test.js",
     "lint": "eslint *.js",
     "validate": "npm run lint && npm run test",
-    "setup": "node setup-helper.js",
+    "setup": "echo '🎭 Setting up HypnoTagger Bot...' && chmod +x *.sh && npm install -g @railway/cli && echo '✅ Setup complete! Ready for iPhone development!'",
     "classify": "node classify.js",
-    "health": "curl -s \"https://api.telegram.org/bot$BOT_TOKEN/getMe\" | jq ."
+    "health": "curl -s \"https://api.telegram.org/bot$BOT_TOKEN/getMe\" | jq .",
+    "deploy": "./deploy-railway.sh",
+    "check": "./check-deployment.sh",
+    "iphone": "echo '📱 iPhone Development Ready!' && ./check-deployment.sh"
   },
   "keywords": [
     "telegram",

@@ -1,0 +1,71 @@
+{
+  "name": "HypnoTagger Bot Development",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:20",
+  
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20"
+    },
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "configureZshAsDefaultShell": true,
+      "installOhMyZsh": true
+    }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.vscode-json",
+        "bradlc.vscode-tailwindcss",
+        "ms-vscode.vscode-typescript-next",
+        "esbenp.prettier-vscode",
+        "ms-vscode.theme-monokai",
+        "PKief.material-icon-theme",
+        "formulahendry.auto-rename-tag",
+        "ms-vscode.live-server"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "editor.fontSize": 14,
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+        "editor.formatOnSave": true,
+        "workbench.colorTheme": "Monokai",
+        "workbench.iconTheme": "material-icon-theme",
+        "editor.minimap.enabled": false,
+        "workbench.startupEditor": "readme",
+        "terminal.integrated.fontSize": 14
+      }
+    }
+  },
+
+  "forwardPorts": [3000, 8080, 7860],
+  "portsAttributes": {
+    "3000": {
+      "label": "Bot Server",
+      "onAutoForward": "notify"
+    },
+    "8080": {
+      "label": "Web Interface", 
+      "onAutoForward": "openPreview"
+    },
+    "7860": {
+      "label": "Automatic1111",
+      "onAutoForward": "silent"
+    }
+  },
+
+  "postCreateCommand": "npm install && npm run setup",
+  
+  "postStartCommand": "echo '🎭 HypnoTagger Bot Codespace Ready! 🔮' && echo '📱 Perfect for iPhone development!' && echo '🚀 Run ./check-deployment.sh to get started'",
+
+  "remoteUser": "node",
+  
+  "workspaceFolder": "/workspaces/hypnotagger-bot",
+  
+  "mounts": [
+    "source=${localWorkspaceFolder}/.env,target=/workspaces/hypnotagger-bot/.env,type=bind,consistency=cached"
+  ]
+}
