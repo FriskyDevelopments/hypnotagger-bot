@@ -1,9 +1,11 @@
 # 🚀 HypnoTagger Bot Deployment Guide
+
 *Complete deployment solutions for iOS and desktop environments*
 
 ## 🎯 Quick Deploy Options
 
 ### 1. 🌐 Railway (Recommended for iOS)
+
 **Best for:** iOS users, automatic deployments, PostgreSQL database
 
 ```bash
@@ -13,6 +15,7 @@
 ```
 
 **iOS Setup Steps:**
+
 1. Visit `railway.app` on iPhone/iPad
 2. Connect GitHub account
 3. Import your bot repository
@@ -20,6 +23,7 @@
 5. Deploy instantly!
 
 **Environment Variables for Railway:**
+
 ```
 BOT_TOKEN=your_bot_token_here
 CHAT_ID=your_chat_id_here
@@ -29,6 +33,7 @@ NODE_ENV=production
 ```
 
 ### 2. 📱 GitHub Codespaces + Railway
+
 **Perfect iOS Development + Deployment Combo**
 
 ```bash
@@ -40,6 +45,7 @@ railway up
 ```
 
 ### 3. 🔄 Heroku (Alternative)
+
 **Good for:** Free tier, easy scaling
 
 ```bash
@@ -53,6 +59,7 @@ git push heroku main
 ```
 
 ### 4. ⚡ Replit (Instant Deploy)
+
 **Best for:** Immediate testing, no setup required
 
 1. Visit `replit.com` on any device
@@ -63,6 +70,7 @@ git push heroku main
 ## 🛠️ Pre-Deployment Checklist
 
 ### ✅ Required Environment Variables
+
 ```bash
 BOT_TOKEN=                    # Your Telegram bot token
 CHAT_ID=                      # Main chat for notifications
@@ -71,6 +79,7 @@ ADMIN_CURATORS=7695459242     # Your user ID
 ```
 
 ### ✅ Optional Integrations
+
 ```bash
 # AI Generation (Optional)
 CIVITAI_API_KEY=              # For AI image generation
@@ -89,6 +98,7 @@ LOUNGE_CHANNEL_ID=            # Discussion group
 ## 🎭 Bot Setup with @BotFather
 
 ### Create KinkScout Profile
+
 ```bash
 # 1. Message @BotFather on Telegram
 # 2. Use these commands:
@@ -113,6 +123,7 @@ start - Begin your journey
 ## 🌐 iOS Deployment Workflow
 
 ### Method 1: GitHub Codespaces + Railway
+
 ```bash
 # 1. Open GitHub Codespaces (recommended)
 #    github.com → Your Repo → Code → Create Codespace
@@ -130,6 +141,7 @@ railway up
 ```
 
 ### Method 2: Direct Railway Deploy
+
 ```bash
 # 1. Visit railway.app on iPhone/iPad
 # 2. Connect GitHub account
@@ -139,6 +151,7 @@ railway up
 ```
 
 ### Method 3: Replit Mobile
+
 ```bash
 # 1. Open replit.com on mobile browser
 # 2. Import from GitHub
@@ -150,6 +163,7 @@ railway up
 ## 🔧 Deployment Scripts
 
 ### Quick Railway Deploy
+
 ```bash
 #!/bin/bash
 echo "🚀 Deploying HypnoTagger Bot to Railway..."
@@ -172,6 +186,7 @@ echo "🔮 Your bot will be live in minutes!"
 ```
 
 ### Environment Setup Script
+
 ```bash
 #!/bin/bash
 echo "⚙️ Setting up environment variables..."
@@ -188,6 +203,7 @@ echo "✅ Environment configured!"
 ## 📊 Monitoring & Management
 
 ### Check Bot Status
+
 ```bash
 # Railway logs
 railway logs
@@ -200,6 +216,7 @@ curl https://your-app.railway.app/health
 ```
 
 ### Update Deployment
+
 ```bash
 # Push updates
 git add .
@@ -213,6 +230,7 @@ git push origin main
 ## 🔮 Advanced iOS Development Setup
 
 ### Complete Mobile Workflow
+
 1. **Development:** GitHub Codespaces (full VS Code in browser)
 2. **Code Management:** GitHub Mobile app (review, merge PRs)
 3. **File Editing:** Working Copy app (iOS Git client)
@@ -220,6 +238,7 @@ git push origin main
 5. **Monitoring:** Railway mobile dashboard
 
 ### iOS-Optimized Tools
+
 - **Blink Shell:** Terminal access on iPad
 - **GitHub Mobile:** Repository management
 - **Working Copy:** Advanced Git operations
@@ -228,6 +247,7 @@ git push origin main
 ## 🎯 Production Checklist
 
 ### Before Going Live
+
 - [ ] Bot token configured and tested
 - [ ] Curator room ID set correctly
 - [ ] Admin user IDs added
@@ -239,6 +259,7 @@ git push origin main
 - [ ] Monitoring set up
 
 ### After Deployment
+
 - [ ] Test `/start` command
 - [ ] Test `/submit` with video URL
 - [ ] Verify curator commands work
@@ -249,6 +270,7 @@ git push origin main
 ## 🚨 Troubleshooting
 
 ### Common Issues
+
 ```bash
 # Bot not responding
 # Check: BOT_TOKEN is correct
@@ -268,6 +290,7 @@ git push origin main
 ```
 
 ### Quick Fixes
+
 ```bash
 # Restart deployment
 railway restart
@@ -290,6 +313,7 @@ Once deployed, your HypnoTagger Bot with KinkScout integration will be:
 ✅ **Running 24/7** on professional infrastructure  
 
 **Test your deployment:**
+
 1. Message your bot: `/start`
 2. Submit a video: `/submit [YouTube URL]`
 3. Test KinkScout: `/scout_guide`
