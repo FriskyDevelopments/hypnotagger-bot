@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🎭 HypnoTagger Bot
 
 ![Version](https://img.shields.io/badge/version-1.0.0-ff6b6b?style=for-the-badge&logo=semantic-release)
@@ -241,3 +242,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🏆 Built with ❤️ for the community
 
 ### Making video sharing smarter, one hashtag at a time
+=======
+# hypnotagger-bot
+A Telegram bot that downloads videos and automatically generates hashtags using AI classification
+>>>>>>> f5607455a09ea0d172946c2266ab6c0623917e38
