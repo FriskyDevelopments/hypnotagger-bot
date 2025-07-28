@@ -1,0 +1,41 @@
+#!/bin/bash
+
+echo "🚀 Railway Deployment - Alternative Method"
+echo "=========================================="
+
+echo "✅ Your Railway project is created: HYPNO"
+echo "🔗 Project URL: https://railway.com/project/7092a0ef-835a-4012-af73-14bfd8be8f2a"
+
+echo ""
+echo "📋 Manual Deployment Steps:"
+echo "1. Visit: https://railway.com/project/7092a0ef-835a-4012-af73-14bfd8be8f2a"
+echo "2. Click 'Deploy from GitHub repo'"
+echo "3. Connect your GitHub account if needed"
+echo "4. Select your repository"
+echo "5. Add these environment variables in Railway dashboard:"
+echo ""
+echo "   🔧 Environment Variables:"
+echo "   BOT_TOKEN=8019311406:AAFkCJbVsjci-criWMGBbwwbrVWDpaMVNMs"
+echo "   CURATOR_ROOM_ID=-1002892425474"
+echo "   ADMIN_CURATORS=7695459242"
+echo "   NODE_ENV=production"
+echo ""
+echo "6. Deploy automatically!"
+
+echo ""
+echo "🎭 Alternative: GitHub Integration"
+echo "================================"
+echo "1. Push your code to GitHub"
+echo "2. Connect Railway to your GitHub repo"
+echo "3. Auto-deploy on every push!"
+
+echo ""
+echo "📱 For iOS Users:"
+echo "================"
+echo "1. Use Safari to visit Railway dashboard"
+echo "2. Connect GitHub account"
+echo "3. Configure environment variables"
+echo "4. One-click deploy!"
+
+echo ""
+echo "🔮 Your bot will be live once environment variables are set!"

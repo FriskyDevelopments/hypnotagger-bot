@@ -1,0 +1,49 @@
+{
+  "name": "hypnotagger-bot",
+  "version": "1.0.0",
+  "description": "🎭 An intelligent Telegram bot that downloads videos and generates contextual hashtags using AI classification",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node index.js",
+    "test": "node test.js",
+    "test:tags": "node test.js",
+    "lint": "eslint *.js",
+    "validate": "npm run lint && npm run test",
+    "setup": "node setup-helper.js",
+    "classify": "node classify.js",
+    "health": "curl -s \"https://api.telegram.org/bot$BOT_TOKEN/getMe\" | jq ."
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "video",
+    "download",
+    "hashtags",
+    "ai",
+    "classification",
+    "yt-dlp",
+    "automation"
+  ],
+  "author": "Anonymous Developer",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PupFr/hypnotagger-bot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/PupFr/hypnotagger-bot/issues"
+  },
+  "homepage": "https://github.com/PupFr/hypnotagger-bot#readme",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.6.1",
+    "node-telegram-bot-api": "^0.61.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.0.0"
+  }
+}

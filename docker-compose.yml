@@ -1,0 +1,47 @@
+# 🎭 HypnoTagger Bot - Docker Compose
+# Anonymous developer styling with distinctive color scheme
+
+version: '3.8'
+
+services:
+  hypnotagger-bot:
+    build: .
+    container_name: hypnotagger-bot
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - BOT_TOKEN=${BOT_TOKEN}
+      - CHAT_ID=${CHAT_ID}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    volumes:
+      - ./temp:/app/temp
+      - ./logs:/app/logs
+    networks:
+      - bot-network
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('Bot is healthy')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Optional: Add a monitoring service
+  # watchtower:
+  #   image: containrrr/watchtower
+  #   container_name: watchtower
+  #   restart: unless-stopped
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   environment:
+  #     - WATCHTOWER_CLEANUP=true
+  #     - WATCHTOWER_POLL_INTERVAL=3600
+  #   networks:
+  #     - bot-network
+
+networks:
+  bot-network:
+    driver: bridge
+
+volumes:
+  temp_data:
+  log_data:

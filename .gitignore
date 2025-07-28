@@ -1,0 +1,116 @@
+
+# .gitignore for HypnoTagger Bot
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.staging
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Runtime files
+*.log
+*.pid
+*.pid.lock
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+*.temp
+
+# Video files (downloaded content)
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+*.flv
+*.wmv
+*.m4v
+
+# Audio files
+*.mp3
+*.wav
+*.flac
+*.aac
+*.ogg
+*.wma
+
+# JSON metadata files
+video_*.json
+metadata_*.json
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Coverage and testing
+coverage/
+.nyc_output/
+.coverage/
+*.lcov
+
+# Build outputs
+dist/
+build/
+out/
+
+# Heroku
+.heroku/
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# Local configuration
+config.local.js
+config.local.json
+
+# Backup files
+*.bak
+*.backup
+
+# Cache directories
+.cache/
+.npm/
+.yarn/
+
+# SSL certificates
+*.pem
+*.key
+*.crt
+*.cert
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Archive files
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+#Ignore vscode AI rules
+.github/copilot-instructions.md

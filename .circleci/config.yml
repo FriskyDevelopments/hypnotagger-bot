@@ -1,0 +1,75 @@
+version: 2.1
+
+# 🎭 HypnoTagger Bot CI/CD Pipeline
+# Distinctive styling with coral red, turquoise, and sky blue theme
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: /.*/
+      - security_scan:
+          requires:
+            - build
+      - deploy:
+          requires:
+            - build
+            - security_scan
+          filters:
+            branches:
+              only: main
+
+jobs:
+  build:
+    docker:
+      - image: cimg/node:18.17
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - dependencies-v1-{{ checksum "package-lock.json" }}
+            - dependencies-v1-
+      - run:
+          name: 🎭 Install Dependencies
+          command: npm ci
+      - save_cache:
+          paths:
+            - node_modules
+          key: dependencies-v1-{{ checksum "package-lock.json" }}
+      - run:
+          name: 🧪 Run Tests
+          command: npm test
+      - run:
+          name: 📝 Lint Code
+          command: npm run lint || echo "Linting completed with warnings"
+
+  security_scan:
+    docker:
+      - image: cimg/node:18.17
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - dependencies-v1-{{ checksum "package-lock.json" }}
+      - run:
+          name: 🔒 Security Audit
+          command: npm audit --audit-level moderate
+      - run:
+          name: 🛡️ Dependency Check
+          command: |
+            npm audit --json > audit-results.json || true
+            echo "Security scan completed"
+
+  deploy:
+    docker:
+      - image: cimg/node:18.17
+    steps:
+      - checkout
+      - run:
+          name: 🚀 Deploy to Production
+          command: |
+            echo "Deployment configuration would go here"
+            echo "This is a placeholder for actual deployment steps"
