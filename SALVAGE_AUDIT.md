@@ -34,6 +34,6 @@ This document captures a salvage-first audit of the repository as an unfinished 
 - one-off debug and setup scripts that duplicate functionality
 
 ### RISK
-- leaked tokens / IDs in `IPHONE-QUICKSTART.md`, `IOS-DEVELOPMENT-GUIDE.md`, `railway-manual-deploy.sh`
+- historical leaked tokens / IDs in documentation and scripts; ensure all secrets are revoked/rotated, removed from repository history, and that secret scanning is enabled
 - unresolved merge conflict markers in `README.md`
 - shell command composition patterns that can become unsafe when reused
