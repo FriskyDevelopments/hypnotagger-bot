@@ -11,6 +11,7 @@ This document captures a salvage-first audit of the repository as an unfinished 
   3) progress UX state handling (`progress-manager.js`),
   4) large-file handling patterns (`chunked-processor.js`).
 - The repo has major health issues: unresolved merge conflicts (`README.md`), dead/broken entrypoint (`index-corrupted.js`), and leaked real bot credentials in multiple docs/scripts.
+- Immediate actions: rotate/revoke all exposed tokens, scrub them from git history, and remove them from any committed docs/scripts before further development or sharing.
 - This should be transformed into internal services, not shipped as-is.
 
 ## Keep / Archive Snapshot
