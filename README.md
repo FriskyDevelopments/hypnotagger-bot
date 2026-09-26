@@ -1,243 +1,158 @@
-# 🎭 HypnoTagger Bot
+# HypnoTagger Bot
 
-![Version](https://img.shields.io/badge/version-1.0.0-ff6b6b?style=for-the-badge&logo=semantic-release)
-![Status](https://img.shields.io/badge/status-active-4ecdc4?style=for-the-badge)
-![License](https://img.shields.io/badge/license-MIT-45b7d1?style=for-the-badge)
-![Node](https://img.shields.io/badge/node-%3E%3D%2018.0.0-96ceb4?style=for-the-badge&logo=node.js)
+**Telegram bot that ingests videos from links, auto-tags them and routes them through a curator workflow**
 
-## An intelligent Telegram bot that downloads videos and generates contextual hashtags using AI classification
+[![🎭 CI/CD Pipeline](https://github.com/FriskyDevelopments/hypnotagger-bot/actions/workflows/ci.yml/badge.svg)](https://github.com/FriskyDevelopments/hypnotagger-bot/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE) ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black) ![Node.js](https://img.shields.io/badge/Node.js-5FA04E?logo=nodedotjs&logoColor=white) ![Telegram Bot](https://img.shields.io/badge/Telegram-Bot-26A5E4?logo=telegram&logoColor=white) ![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
 
-## ✨ Features
+HypnoTagger is a Node.js Telegram bot prototype for an adult (18+) hypno/fetish content community. Send it a link with `/submit <url>`: it reads the metadata and downloads the video with `yt-dlp` (splitting long videos into chunks and joining them with `ffmpeg`), tags it with a **weighted keyword classifier** (`tagger.js`, not an LLM), and posts it with hashtags to the configured chat. Curators then send items to teaser/VIP channels or reject them. Optional modules add Fansly ingestion, local image generation through an Automatic1111 WebUI with Civitai models, and a "KinkScout" character persona. It's for channel operators and curators. The code is an **unfinished prototype**: see [SALVAGE_AUDIT.md](SALVAGE_AUDIT.md) for what's worth keeping.
 
-- 🎬 **Video Download**: Seamlessly downloads videos from various platforms using `yt-dlp`
-- 🏷️ **Smart Tagging**: AI-powered hashtag generation based on video content and metadata
-- 📱 **Telegram Integration**: Clean, intuitive bot interface with real-time feedback
-- 🔄 **Auto-cleanup**: Automatically removes temporary files after processing
-- ⚡ **Fast Processing**: Optimized for quick turnaround times
-- 🎯 **Interactive Categories**: User-prompted category creation and management
-- 📊 **Confidence Scoring**: Advanced classification with confidence levels
-- 🛠️ **Category Management**: Export, import, and manage classification categories
+## Architecture
 
-## 🚀 Quick Start
-
-### Prerequisites
-
-- Node.js 18+
-- `yt-dlp` installed on your system
-- Telegram Bot Token
-- Chat ID for your target channel/group
-
-### Installation
-
-1. **Clone the repository**
-
-   ```bash
-   git clone https://github.com/[YOUR_USERNAME]/hypnotagger-bot.git
-   cd hypnotagger-bot
-   ```
-
-2. **Install dependencies**
-
-   ```bash
-   npm install
-   ```
-
-3. **Environment Setup**
-
-   Create a `.env` file in the root directory:
-
-   ```env
-   BOT_TOKEN=your_telegram_bot_token_here
-   CHAT_ID=your_target_chat_id_here
-   ```
-
-4. **Launch the bot**
-
-   ```bash
-   npm start
-   ```
-
-## 🎯 Usage
-
-### Bot Commands
-
-Send these commands to your bot:
-
-```text
-/submit <video_url>     - Download and tag video
-/classify <text>        - Test text classification
-/categories             - List all available categories
-/health                 - Check bot status
-/help                   - Show help
-/export                 - Export categories (admin only)
+```mermaid
+flowchart LR
+  user([Submitter / curator]) -->|/submit url · /tag · /sendteaser · /sendvip · /reject| tg[Telegram Bot API]
+  tg <-->|long polling| bot[index.js<br/>node-telegram-bot-api]
+  bot -->|yt-dlp -j / -f best| src[(Source video sites)]
+  bot --> chunk[chunked-processor.js<br/>yt-dlp segments + ffmpeg concat]
+  bot --> prog[progress-manager.js]
+  bot --> tagger[tagger.js<br/>weighted keyword classifier]
+  bot --> cur[curator-module.js<br/>roles · review queue]
+  cur -->|sendVideo| chans[Telegram channels<br/>vault · elite · lounge · curator room]
+  bot -.->|optional| fansly[fansly-integration.js<br/>Python helper]
+  bot -.->|optional| civ[civitai-integration.js] --> a1111[Automatic1111 WebUI]
+  bot -.->|optional| ks[kinkscout-logic.js]
+  bot --> tmp[(TEMP_DIR<br/>deleted after processing)]
 ```
 
-**Example:**
+### Submit lifecycle
 
-```text
-/submit https://www.youtube.com/watch?v=dQw4w9WgXcQ
+```mermaid
+sequenceDiagram
+  participant U as User
+  participant B as Bot
+  participant Y as yt-dlp / ffmpeg
+  participant C as Target chat
+  U->>B: /submit <url>
+  B->>Y: fetch metadata (-j)
+  B->>B: check duration vs MAX_DURATION_SECONDS
+  B->>Y: download (chunked if large)
+  B->>B: classifyWithConfidence(title + description)
+  B->>C: sendVideo + generated hashtags
+  B->>B: remove temp files
 ```
 
-### Interactive Classification Tool
+## Stack
 
-Use the enhanced classification utility for manual testing and category management:
+- Node.js ≥ 18, `node-telegram-bot-api`, `dotenv`
+- `yt-dlp` and `ffmpeg` (system binaries), Python 3 for the Fansly helper
+- ESLint, GitHub Actions and CircleCI configs
+- Docker / docker-compose, Railway (Nixpacks), a Heroku deploy script
+
+## Project structure
+
+```text
+index.js                 main bot: commands, submit pipeline, startup checks
+tagger.js                weighted keyword classifier + category import/export
+classify.js              interactive CLI for testing the classifier
+chunked-processor.js     large-video download in segments + ffmpeg concat
+progress-manager.js      progress messages / state
+curator-module.js        curator roles and channel routing
+fansly-integration.js    optional Fansly ingestion
+civitai-integration.js   optional image generation (Automatic1111 + Civitai)
+kinkscout-*.js           optional persona bot logic
+test*.js, debug-*.js     ad-hoc test and debug scripts
+index-corrupted.js       broken legacy entry point (do not use)
+*.md                     setup, deployment and integration guides
+```
+
+## Local development
+
+Requires Node.js 18+, plus `yt-dlp` and `ffmpeg` on the PATH.
 
 ```bash
-# Start interactive mode
-node classify.js
+# Install dependencies
+npm install
 
-# Available commands in interactive mode:
-classify <text>           # Classify text
-categories               # List all categories
-interactive on/off       # Toggle category suggestions
-export                   # Backup categories to file
-import <file>            # Restore categories from file
-help                     # Show command help
+# Template with the variable names the code actually reads (BOT_TOKEN, CHAT_ID, …)
+cp .env.railway .env
+
+# Run the bot (long polling)
+npm start
+
+# Classifier tests (node test.js)
+npm test
+
+# ESLint
+npm run lint
+
+# Interactive classifier CLI
+npm run classify
+
+# Check the token against getMe (needs BOT_TOKEN and jq)
+npm run health
 ```
 
-### Category Management
+Commands registered in `index.js`: `/start`, `/submit <url>`, `/classify <text>`, `/categories`, `/export`, `/tag <content>`, `/sendteaser`, `/sendvip`, `/reject`, `/generate <prompt>`, `/aimodels`, `/switchmodel <name>`, `/kinkscout <scenario>`, `/scout_guide`, `/underground_map`, `/scout_wisdom`, `/enhance_kinkscout`. The older `/health` and `/help` commands from previous docs aren't implemented. See [COMMANDS.md](COMMANDS.md) and [BOTFATHER-COMMANDS.md](BOTFATHER-COMMANDS.md).
 
-The system can automatically suggest new categories when it encounters unknown keywords:
+### Customizing tags
 
-1. **Automatic Detection**: System identifies potentially new keywords
-2. **User Prompt**: Asks whether to create new category or assign to existing
-3. **Interactive Creation**: Guides through category creation process
-4. **Backup/Restore**: Export and import category configurations
+Categories, keywords, weights and context words live in `tagger.js` (`tagCategories`). Use `node classify.js` to test changes interactively and to export or import category sets.
 
-The bot will:
+## Environment variables
 
-1. 🌀 Extract video metadata
-2. 📥 Download the video in best quality
-3. 🧠 Analyze content and generate relevant hashtags
-4. 📤 Post the video with generated tags to your specified chat
+Names only. Note that `.env.example` uses different names (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHANNEL_ID`) than the code, which reads `BOT_TOKEN` and `CHAT_ID`.
 
-## 🛠️ Project Structure
+**Core**
 
-```text
-hypnotagger-bot/
-├── 📄 index.js          # Main bot logic and Telegram integration
-├── 🏷️ tagger.js         # AI classification engine
-├── 📦 package.json      # Dependencies and scripts
-├── 🚀 Procfile          # Deployment configuration
-├── 🔒 .env              # Environment variables (create this)
-└── 📖 README.md         # This file
-```
+- `BOT_TOKEN`
+- `CHAT_ID`
+- `ADMIN_CHAT_ID`
+- `NODE_ENV`
+- `TEMP_DIR`
+- `MAX_FILE_SIZE_MB`
+- `MAX_DURATION_SECONDS`
 
-## 🎨 Customization
+**Curator workflow**
 
-### Modifying Tag Classification
+`VAULT_CHANNEL_ID`, `ELITE_CHANNEL_ID`, `LOUNGE_CHANNEL_ID`, `CURATOR_ROOM_ID`, `ADMIN_CURATORS`, `SENIOR_CURATORS`, `JUNIOR_CURATORS`, `TRAINEE_CURATORS`, `AUTHORIZED_CURATORS`
 
-Edit `tagger.js` to customize the AI classification logic:
+**Optional integrations**
 
-```javascript
-// Add custom tag categories
-const customCategories = {
-  technology: ['tech', 'coding', 'ai', 'software'],
-  entertainment: ['music', 'gaming', 'comedy', 'movies'],
-  // Add your own categories...
-};
-```
+- `FANSLY_CONFIG`
+- `PYTHON_PATH`
+- `CIVITAI_API_KEY`
+- `AUTOMATIC1111_URL`
+- `KINKSCOUT_BOT_TOKEN`
 
-### Bot Responses
+**Listed in .env.example only**
 
-Customize bot messages in `index.js`:
+- `TELEGRAM_BOT_TOKEN`
+- `TELEGRAM_CHANNEL_ID`
+- `OPENAI_API_KEY`
+- `PORT`
+- `FANSLY_API_KEY`
+- `FANSLY_SESSION_ID`
+- `DATABASE_URL`
 
-```javascript
-// Customize loading message
-bot.sendMessage(chatId, `🌀 Your custom loading message...`);
+## Deploy
 
-// Customize error messages
-bot.sendMessage(chatId, "❌ Your custom error message.");
-```
+The bot is a long-running polling process (no webhook or HTTP server), so it needs a host that keeps a worker alive:
+- **Railway**: `railway.json` (Nixpacks, `npm start`, restart on failure) and `npm run deploy` (`deploy-railway.sh`). See [RAILWAY-DEPLOYMENT.md](RAILWAY-DEPLOYMENT.md).
+- **Docker**: `Dockerfile` (node:18-alpine) and `docker-compose.yml`.
+- **Heroku**: `deploy-heroku.sh` and `Procfile`.
 
-## 🔧 Configuration
+The GitHub Actions deploy job is a placeholder, and the CI workflow is currently failing. More guides: [DEPLOYMENT-GUIDE.md](DEPLOYMENT-GUIDE.md), [QUICK-DEPLOY.md](QUICK-DEPLOY.md).
 
-| Environment Variable | Description | Required |
-|---------------------|-------------|----------|
-| `BOT_TOKEN` | Your Telegram Bot API token | ✅ |
-| `CHAT_ID` | Target chat/channel ID | ✅ |
+## Security
 
-## 📋 Requirements
+- Never commit `.env`. Only use `.env.example` / `.env.railway` as templates.
+- A bot token appeared in committed scripts and guides in this repo's history. It must be treated as compromised: revoke it in @BotFather and scrub the history (see [SALVAGE_AUDIT.md](SALVAGE_AUDIT.md) and [SECURITY.md](SECURITY.md)).
+- `index.js` builds `yt-dlp` shell commands from user-supplied URLs. Sanitize the input or switch to `execFile` before exposing the bot publicly.
 
-- **System**: macOS, Linux, or Windows
-- **Node.js**: Version 18.0.0 or higher
-- **yt-dlp**: Latest version recommended
-- **Memory**: 512MB+ available RAM
-- **Storage**: Temporary space for video processing
+## More docs
 
-## 🔄 Deployment
+[CONTRIBUTING.md](CONTRIBUTING.md) · [CHANGELOG.md](CHANGELOG.md) · [PROJECT-STATUS.md](PROJECT-STATUS.md) · [LARGE-VIDEO-PROCESSING.md](LARGE-VIDEO-PROCESSING.md) · [FANSLY-INTEGRATION.md](FANSLY-INTEGRATION.md) · [CIVITAI-INTEGRATION.md](CIVITAI-INTEGRATION.md) · [KINKSCOUT-BOT.md](KINKSCOUT-BOT.md) · [TELEGRAM-SETUP-GUIDE.md](TELEGRAM-SETUP-GUIDE.md)
 
-### Heroku Deployment
+## License
 
-1. **Prepare for Heroku**
-
-   ```bash
-   heroku create your-app-name
-   heroku config:set BOT_TOKEN=your_token_here
-   heroku config:set CHAT_ID=your_chat_id_here
-   ```
-
-2. **Deploy**
-
-   ```bash
-   git push heroku main
-   ```
-
-### Docker Deployment
-
-```dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY . .
-CMD ["npm", "start"]
-```
-
-## 🤝 Contributing
-
-We welcome contributions! Here's how to get started:
-
-1. 🍴 Fork the repository
-2. 🌿 Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. 💾 Commit your changes (`git commit -m 'Add amazing feature'`)
-4. 📤 Push to the branch (`git push origin feature/amazing-feature`)
-5. 🔄 Open a Pull Request
-
-### Development Guidelines
-
-- Follow existing code style and patterns
-- Add comments for complex logic
-- Test your changes thoroughly
-- Update documentation as needed
-
-## 📜 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🛡️ Security
-
-- Never commit your `.env` file
-- Keep your bot token secure
-- Use environment variables for sensitive data
-- Regularly update dependencies
-
-## ⚡ Performance Tips
-
-- Monitor bot memory usage during video processing
-- Consider implementing queue system for high-traffic scenarios
-- Use video format selection to optimize file sizes
-- Implement rate limiting if needed
-
-## 📞 Support
-
-- 🐛 **Bug Reports**: Open an issue with detailed reproduction steps
-- 💡 **Feature Requests**: Describe your use case and proposed solution
-- 📚 **Documentation**: Help improve our docs
-- 💬 **Questions**: Check existing issues before creating new ones
-
----
-
-## 🏆 Built with ❤️ for the community
-
-### Making video sharing smarter, one hashtag at a time
+See [LICENSE](LICENSE).
